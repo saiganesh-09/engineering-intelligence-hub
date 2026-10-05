@@ -78,7 +78,11 @@ def clone_repository(url: str, dest: Path, branch: str | None = None) -> str:
     dest.parent.mkdir(parents=True, exist_ok=True)
     authed = _authed_url(url)
     git = Git()
-    branches = [branch] if branch else [None, "main", "master"]
+    # Try the requested branch first, then the remote default and common names.
+    if branch:
+        branches = list(dict.fromkeys([branch, None, "main", "master"]))
+    else:
+        branches = [None, "main", "master"]
     last_err: Exception | None = None
     for b in branches:
         try:

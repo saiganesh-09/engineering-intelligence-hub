@@ -17,6 +17,7 @@ TARGET_TOKENS = 450
 MAX_TOKENS = 700
 OVERLAP_TOKENS = 60
 MIN_TOKENS = 20
+CODE_MIN_TOKENS = 8  # a one-liner function is still meaningful
 
 
 def approx_tokens(text: str) -> int:
@@ -77,7 +78,7 @@ def chunk_blocks(blocks: list[Block]) -> list[RawChunk]:
     def flush():
         nonlocal buf, buf_pages
         text = "\n\n".join(buf).strip()
-        if text and approx_tokens(text) >= MIN_TOKENS:
+        if text:
             chunks.append(
                 RawChunk(
                     content=text,
@@ -109,6 +110,25 @@ def chunk_blocks(blocks: list[Block]) -> list[RawChunk]:
             if approx_tokens("\n\n".join(buf)) >= MAX_TOKENS:
                 flush()
     flush()
+
+    # Merge undersized chunks into a neighbor instead of dropping them —
+    # small sections still carry retrievable knowledge.
+    if len(chunks) > 1:
+        merged: list[RawChunk] = []
+        for c in chunks:
+            if merged and approx_tokens(c.content) < MIN_TOKENS:
+                merged[-1].content += "\n\n" + c.content
+                prev, cur = merged[-1].meta, c.meta
+                if cur.get("page_end") and (
+                    not prev.get("page_end") or cur["page_end"] > prev["page_end"]
+                ):
+                    prev["page_end"] = cur["page_end"]
+            else:
+                merged.append(c)
+        if len(merged) > 1 and approx_tokens(merged[0].content) < MIN_TOKENS:
+            merged[1].content = merged[0].content + "\n\n" + merged[1].content
+            merged.pop(0)
+        chunks = merged
     return chunks
 
 
@@ -190,9 +210,14 @@ def chunk_code(content: str, language: str | None, file_path: str) -> list[RawCh
         chunks = _chunk_python_ast(content)
     if not chunks:
         chunks = _chunk_code_lines(content)
-    # Drop trivially small chunks except tiny files.
+    # Drop trivially small chunks except tiny files; always keep the
+    # module preamble (imports/constants carry useful context).
     if len(chunks) > 1:
-        chunks = [c for c in chunks if approx_tokens(c.content) >= MIN_TOKENS]
+        chunks = [
+            c for c in chunks
+            if approx_tokens(c.content) >= CODE_MIN_TOKENS
+            or c.meta.get("kind") == "module"
+        ]
     for c in chunks:
         c.meta.setdefault("file_path", file_path)
         if language:

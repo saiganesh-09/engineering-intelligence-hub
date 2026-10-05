@@ -120,7 +120,20 @@ class MockLLM:
         # sentences of each block so answers are grounded in real sources.
         import re
 
-        blocks = re.findall(r"\[(\d+)\] [^\n]*\n((?:.+\n?)+?)(?=\n\[\d+\]|\Z)", system)
+        blocks: list[tuple[str, str]] = []
+        current_num: str | None = None
+        current_lines: list[str] = []
+        for line in system.splitlines():
+            m = re.match(r"^\[(\d+)\] ", line)
+            if m:
+                if current_num is not None:
+                    blocks.append((current_num, "\n".join(current_lines).strip()))
+                current_num = m.group(1)
+                current_lines = []
+            elif current_num is not None:
+                current_lines.append(line)
+        if current_num is not None:
+            blocks.append((current_num, "\n".join(current_lines).strip()))
         lines = [f"**Question:** {user}\n"]
         if not blocks:
             lines.append(

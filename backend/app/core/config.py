@@ -49,7 +49,7 @@ class Settings(BaseSettings):
     # --- RAG ---
     rag_top_k: int = 8
     rag_candidate_k: int = 24  # candidates fetched before re-ranking/dedup
-    rag_min_score: float = 0.0
+    rag_min_score: float = 0.08
 
     # --- GitHub ---
     github_token: str = ""  # optional PAT for private repos / higher rate limits

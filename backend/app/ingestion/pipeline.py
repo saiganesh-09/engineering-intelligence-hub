@@ -77,8 +77,11 @@ def process_document(document_id: str) -> None:
         _embed_chunks(db, chunks)
 
         doc.status = DocumentStatus.indexed
-        doc.title = parsed.title or doc.title
-        doc.meta = {**doc.meta, "chunk_count": len(chunks)}
+        doc.meta = {
+            **doc.meta,
+            "chunk_count": len(chunks),
+            "parsed_title": parsed.title,
+        }
         db.commit()
         logger.info("Indexed document %s (%d chunks)", doc.id, len(chunks))
     except Exception as exc:  # noqa: BLE001 — surface failure on the record

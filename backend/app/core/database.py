@@ -14,6 +14,17 @@ else:
 
 engine = create_engine(settings.database_url, **_engine_kwargs)
 
+
+@event.listens_for(engine, "connect")
+def _sqlite_pragmas(dbapi_conn, _):
+    """WAL mode lets readers coexist with a writer — avoids the
+    reader-blocks-writer deadlock streaming responses can hit."""
+    if engine.dialect.name == "sqlite":
+        cur = dbapi_conn.cursor()
+        cur.execute("PRAGMA journal_mode=WAL")
+        cur.execute("PRAGMA busy_timeout=15000")
+        cur.close()
+
 SessionLocal = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
 
 
