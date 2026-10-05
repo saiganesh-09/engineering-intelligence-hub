@@ -78,10 +78,10 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" render={<Link href="/login" />}>
+            <Button variant="ghost" nativeButton={false} render={<Link href="/login" />}>
               Sign in
             </Button>
-            <Button render={<Link href="/register" />}>Get started</Button>
+            <Button nativeButton={false} render={<Link href="/register" />}>Get started</Button>
           </div>
         </div>
       </header>
@@ -109,10 +109,10 @@ export default function LandingPage() {
             hallucinated.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Button size="lg" render={<Link href="/register" />}>
+            <Button size="lg" nativeButton={false} render={<Link href="/register" />}>
               Start for free <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
-            <Button size="lg" variant="outline" render={<Link href="/search" />}>
+            <Button size="lg" variant="outline" nativeButton={false} render={<Link href="/search" />}>
               <Search className="mr-1.5 h-4 w-4" /> Try the search
             </Button>
           </div>
@@ -209,7 +209,7 @@ export default function LandingPage() {
             production, offline mock mode with zero API keys.
           </p>
           <div className="relative mt-7 flex justify-center gap-3">
-            <Button size="lg" variant="secondary" render={<Link href="/register" />}>
+            <Button size="lg" variant="secondary" nativeButton={false} render={<Link href="/register" />}>
               Create your workspace
             </Button>
           </div>

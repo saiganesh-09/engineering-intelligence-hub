@@ -22,7 +22,7 @@ export default function ConversationsPage() {
         title="Conversations"
         description="Your AI chat history — pick up where you left off."
         actions={
-          <Button size="sm" render={<Link href="/chat" />}>
+          <Button size="sm" nativeButton={false} render={<Link href="/chat" />}>
             <Plus className="mr-1.5 h-4 w-4" /> New conversation
           </Button>
         }
@@ -34,7 +34,7 @@ export default function ConversationsPage() {
           icon={MessageSquareText}
           title="No conversations yet"
           body="Ask your first engineering question in the AI chat."
-          action={<Button size="sm" render={<Link href="/chat" />}>Open chat</Button>}
+          action={<Button size="sm" nativeButton={false} render={<Link href="/chat" />}>Open chat</Button>}
         />
       ) : (
         <div className="space-y-2">

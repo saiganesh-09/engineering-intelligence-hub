@@ -112,7 +112,7 @@ export function RepositoriesList({ onConnect }: { onConnect?: () => void }) {
                 <Button variant="outline" size="sm" onClick={() => reindex(r)}>
                   <RefreshCw className="mr-1 h-3.5 w-3.5" /> Re-index
                 </Button>
-                <Button variant="outline" size="sm" render={<Link href={`/repositories/${r.id}`} />}>
+                <Button variant="outline" size="sm" nativeButton={false} render={<Link href={`/repositories/${r.id}`} />}>
                   Explore
                 </Button>
                 <Button

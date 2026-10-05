@@ -145,7 +145,7 @@ export default function RepoExplorerPage() {
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between border-b border-border px-5 py-3">
         <div className="flex min-w-0 items-center gap-3">
-          <Button variant="ghost" size="icon" render={<Link href="/repositories" />}>
+          <Button variant="ghost" size="icon" nativeButton={false} render={<Link href="/repositories" />}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
           {repo.isLoading ? (
