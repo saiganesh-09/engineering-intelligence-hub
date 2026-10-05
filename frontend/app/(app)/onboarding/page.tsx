@@ -57,7 +57,7 @@ export default function OnboardingPage() {
               <SelectContent>
                 <SelectItem value="all">All knowledge sources</SelectItem>
                 {repos.data?.map((r) => (
-                  <SelectItem key={r.id} value={r.id}>
+                  <SelectItem key={r.id} value={r.id} label={`${r.owner}/${r.name}`}>
                     {r.owner}/{r.name}
                   </SelectItem>
                 ))}

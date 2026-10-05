@@ -78,12 +78,12 @@ export default function ArchitecturePage() {
                 <SelectContent>
                   <SelectItem value="all">All knowledge sources</SelectItem>
                   {archDocs.map((d) => (
-                    <SelectItem key={d.id} value={`doc:${d.id}`}>
+                    <SelectItem key={d.id} value={`doc:${d.id}`} label={`Doc: ${d.title}`}>
                       Doc: {d.title}
                     </SelectItem>
                   ))}
                   {repos.data?.map((r) => (
-                    <SelectItem key={r.id} value={`repo:${r.id}`}>
+                    <SelectItem key={r.id} value={`repo:${r.id}`} label={`Repo: ${r.owner}/${r.name}`}>
                       Repo: {r.owner}/{r.name}
                     </SelectItem>
                   ))}

@@ -93,9 +93,9 @@ def _filters(source_types=None, repository=None, language=None):
     if source_types:
         conds.append(Chunk.source_type.in_(source_types))
     if repository:
-        conds.append(Chunk.meta["repository"].astext == repository)
+        conds.append(Chunk.meta["repository"].as_string() == repository)
     if language:
-        conds.append(Chunk.meta["language"].astext == language)
+        conds.append(Chunk.meta["language"].as_string() == language)
     return and_(*conds) if conds else None
 
 

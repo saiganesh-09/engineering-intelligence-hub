@@ -116,14 +116,16 @@ class MockLLM:
     def _answer(self, messages: list[dict]) -> str:
         user = next((m["content"] for m in reversed(messages) if m["role"] == "user"), "")
         system = messages[0]["content"] if messages else ""
-        # The RAG prompt embeds numbered context blocks; echo the leading
-        # sentences of each block so answers are grounded in real sources.
+        # The RAG prompt embeds numbered context blocks (in system or user
+        # content depending on the feature); echo the leading sentences of
+        # each block so answers are grounded in real sources.
         import re
 
+        haystack = system + "\n" + user
         blocks: list[tuple[str, str]] = []
         current_num: str | None = None
         current_lines: list[str] = []
-        for line in system.splitlines():
+        for line in haystack.splitlines():
             m = re.match(r"^\[(\d+)\] ", line)
             if m:
                 if current_num is not None:
@@ -134,13 +136,8 @@ class MockLLM:
                 current_lines.append(line)
         if current_num is not None:
             blocks.append((current_num, "\n".join(current_lines).strip()))
-        lines = [f"**Question:** {user}\n"]
-        if not blocks:
-            lines.append(
-                "The available engineering knowledge does not provide enough "
-                "information to answer this question."
-            )
-        else:
+        lines: list[str] = []
+        if blocks:
             lines.append("Based on the retrieved engineering sources:\n")
             for num, body in blocks[:5]:
                 sentences = re.split(r"(?<=[.!?])\s+", body.strip())
@@ -149,6 +146,24 @@ class MockLLM:
             lines.append(
                 "\n*Mock LLM is active (no API key configured). Answers are "
                 "extractive summaries of retrieved context.*"
+            )
+        else:
+            # No numbered context — extractively summarize the largest text
+            # blob passed in (e.g. document text for summarize endpoints).
+            content = max((m["content"] for m in messages), key=len, default="")
+            content = "\n".join(
+                l for l in content.splitlines()
+                if not re.match(r"^(Style|Document|Question|Task|Format|Focus):", l.strip())
+            )
+            sentences = [
+                s.strip() for s in re.split(r"(?<=[.!?])\s+", content)
+                if len(s.strip()) > 25
+            ]
+            excerpt = " ".join(sentences[:4])[:800] or content[:400]
+            lines.append(excerpt)
+            lines.append(
+                "\n*Mock LLM is active (no API key configured). Output is an "
+                "extractive summary of the supplied content.*"
             )
         return "\n".join(lines)
 

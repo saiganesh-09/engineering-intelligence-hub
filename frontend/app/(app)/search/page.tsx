@@ -96,7 +96,7 @@ function SearchInner() {
           <SelectContent>
             <SelectItem value="all">All repositories</SelectItem>
             {repos.data?.map((r) => (
-              <SelectItem key={r.id} value={r.name}>
+              <SelectItem key={r.id} value={r.name} label={`${r.owner}/${r.name}`}>
                 {r.owner}/{r.name}
               </SelectItem>
             ))}
