@@ -262,7 +262,7 @@ export default function RepoExplorerPage() {
                   placeholder="Ask AI about this file… e.g. “explain this function”"
                   className="h-9 flex-1 rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
-                <Button size="sm" disabled={explaining || !question.trim()}>
+                <Button type="submit" size="sm" disabled={explaining || !question.trim()}>
                   Ask
                 </Button>
               </form>

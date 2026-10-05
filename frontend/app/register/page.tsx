@@ -63,7 +63,7 @@ export default function RegisterPage() {
               <Input id="password" type="password" required autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="8+ characters" />
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button className="w-full" disabled={busy}>
+            <Button type="submit" className="w-full" disabled={busy}>
               {busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Create account
             </Button>
