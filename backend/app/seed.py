@@ -4,6 +4,7 @@ sample incidents. Idempotent — safe to run repeatedly.
 Usage:  python -m app.seed
 """
 import logging
+import os
 from pathlib import Path
 
 from app.auth.security import hash_password
@@ -22,7 +23,10 @@ from app.models.user import User, UserRole
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("seed")
 
-SAMPLE_DIR = Path(__file__).resolve().parent.parent.parent / "docs" / "sample"
+SAMPLE_DIR = Path(
+    os.environ.get("SEED_SAMPLE_DIR")
+    or Path(__file__).resolve().parent.parent.parent / "docs" / "sample"
+)
 
 
 def seed() -> None:

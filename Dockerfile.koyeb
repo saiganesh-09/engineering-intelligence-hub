@@ -1,0 +1,24 @@
+# Root-context Dockerfile for Koyeb's Git-based Docker deploy
+# (Koyeb builds from the repo root; paths prefix backend/).
+FROM python:3.13-slim
+
+WORKDIR /app
+
+# git is required for repository cloning
+RUN apt-get update && apt-get install -y --no-install-recommends git \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY backend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY backend/app ./app
+COPY docs ./docs
+
+ENV PYTHONUNBUFFERED=1 \
+    STORAGE_DIR=/app/storage \
+    SEED_DEMO=1 \
+    SEED_SAMPLE_DIR=/app/docs/sample
+
+EXPOSE 8000
+
+CMD ["sh", "-c", "python -m app.bootstrap && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
