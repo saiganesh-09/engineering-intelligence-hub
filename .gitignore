@@ -25,3 +25,9 @@ backend/storage/
 .DS_Store
 Thumbs.db
 *.log
+
+# Local dev databases
+eih.db*
+backend/eih.db*
+*.db-shm
+*.db-wal
