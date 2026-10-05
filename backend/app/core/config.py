@@ -2,6 +2,7 @@
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -23,6 +24,18 @@ class Settings(BaseSettings):
     # --- Database ---
     # e.g. postgresql+psycopg://eih:eih@localhost:5432/eih
     database_url: str = "postgresql+psycopg://eih:eih@localhost:5432/eih"
+
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def _normalize_db_scheme(cls, v: str) -> str:
+        # PaaS providers (Railway, Render, Heroku) hand out bare
+        # postgresql:// / postgres:// URLs; we need the psycopg v3 driver.
+        if isinstance(v, str):
+            if v.startswith("postgresql://"):
+                return "postgresql+psycopg://" + v[len("postgresql://"):]
+            if v.startswith("postgres://"):
+                return "postgresql+psycopg://" + v[len("postgres://"):]
+        return v
 
     # --- Auth / JWT ---
     jwt_secret: str = "change-me-in-production"
