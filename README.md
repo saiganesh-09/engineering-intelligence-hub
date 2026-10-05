@@ -1,7 +1,8 @@
 # Engineering Intelligence Hub
 
 **🔗 Live demo:** https://engineering-intelligence-hub-psi.vercel.app
-(frontend on Vercel · FastAPI on Vercel serverless · Neon Postgres —
+(frontend on Vercel · API https://eih-api.vercel.app on Vercel
+serverless · Neon Postgres —
 `SEED_DEMO` seeds the demo workspace on cold start; sign in with
 `admin@eih.dev` / `admin12345` or register)
 
