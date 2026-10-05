@@ -24,9 +24,9 @@ services:
         value: mock
       - key: EMBEDDING_PROVIDER
         value: mock
-      # Update after the Vercel frontend URL exists.
+      # Must match the deployed Vercel origin (production CORS is strict).
       - key: FRONTEND_URL
-        value: https://engineering-intelligence-hub.vercel.app
+        value: https://engineering-intelligence-hub-psi.vercel.app
       - key: RATE_LIMIT_PER_MINUTE
         value: "240"
 
