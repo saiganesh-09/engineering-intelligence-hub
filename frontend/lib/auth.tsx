@@ -38,7 +38,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    refresh();
+    // Defer so the no-token fast path doesn't setState inside the effect body.
+    const t = setTimeout(refresh, 0);
+    return () => clearTimeout(t);
   }, [refresh]);
 
   const login = useCallback(async (email: string, password: string) => {

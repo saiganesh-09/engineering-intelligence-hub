@@ -6,7 +6,7 @@ import { ExternalLink, FolderGit2, Loader2, RefreshCw, Trash2 } from "lucide-rea
 import { toast } from "sonner";
 import { api, ApiError } from "@/lib/api";
 import type { Repository } from "@/lib/types";
-import { formatDateTime, timeAgo } from "@/lib/format";
+import { timeAgo } from "@/lib/format";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";

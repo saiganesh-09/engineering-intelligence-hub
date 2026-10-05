@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/select";
 import { EmptyState, LoadingRows, PageHeader } from "@/components/shared";
 import { SourceTypeIcon, sourceTypeLabel } from "@/components/citations";
-import { Markdown } from "@/components/markdown";
 
 const SOURCE_TYPES: { value: SourceType; label: string }[] = [
   { value: "document", label: "Documents" },

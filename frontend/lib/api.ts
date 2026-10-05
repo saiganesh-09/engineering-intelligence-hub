@@ -47,7 +47,8 @@ async function request<T>(
   if (res.status === 401 && !path.startsWith("/api/auth/")) {
     setToken(null);
     if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
-      window.location.href = "/login";
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.href = "/login"; // hard redirect clears all client state
     }
   }
 

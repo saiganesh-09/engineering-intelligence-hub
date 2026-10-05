@@ -12,7 +12,6 @@ import {
   Layers,
   MessageSquareText,
   ShieldAlert,
-  Users,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import type { ActivityItem, DashboardStats, PopularQuestion } from "@/lib/types";
@@ -21,7 +20,6 @@ import { useAuth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EmptyState, LoadingRows, PageHeader, StatCard, StatusBadge } from "@/components/shared";
-import { SourceTypeIcon } from "@/components/citations";
 
 const ACTIVITY_ICON = {
   document: FileText,

@@ -25,8 +25,6 @@ export default function OnboardingPage() {
   const [busy, setBusy] = useState(false);
 
   const repos = useQuery({ queryKey: ["repos"], queryFn: () => api.get<Repository[]>("/api/repositories") });
-  const hasRepos = (repos.data?.length ?? 0) > 0;
-
   async function generate() {
     setBusy(true);
     setResult(null);

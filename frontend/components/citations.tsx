@@ -11,7 +11,7 @@ import {
   Network,
   HelpCircle,
 } from "lucide-react";
-import type { Citation, RetrievedSource, SourceType } from "@/lib/types";
+import type { Citation, SourceType } from "@/lib/types";
 import {
   Dialog,
   DialogContent,

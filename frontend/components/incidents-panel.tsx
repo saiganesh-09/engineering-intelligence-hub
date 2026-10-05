@@ -137,11 +137,9 @@ export function IncidentForm({
 export function IncidentsPanel({
   createOpen,
   setCreateOpen,
-  compact,
 }: {
   createOpen?: boolean;
   setCreateOpen?: (o: boolean) => void;
-  compact?: boolean;
 }) {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);

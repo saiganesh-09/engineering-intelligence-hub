@@ -20,7 +20,6 @@ import { api, streamChat } from "@/lib/api";
 import type {
   Conversation,
   ConversationDetail,
-  Message,
   RetrievedSource,
 } from "@/lib/types";
 import { timeAgo } from "@/lib/format";
@@ -30,7 +29,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Markdown } from "@/components/markdown";
 import { CitationList } from "@/components/citations";
-import { EmptyState } from "@/components/shared";
 
 interface UiMessage {
   id: string;
@@ -192,6 +190,8 @@ function ChatInner() {
   const [busy, setBusy] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const loadedRef = useRef<string | null>(null);
+  const idSeq = useRef(0);
+  const nextId = (p: string) => `${p}-${++idSeq.current}`;
 
   // Load an existing conversation's messages.
   useEffect(() => {
@@ -239,11 +239,11 @@ function ChatInner() {
     setInput("");
     setBusy(true);
     const userMsg: UiMessage = {
-      id: `u-${Date.now()}`,
+      id: nextId("u"),
       role: "user",
       content: question,
     };
-    const assistantId = `a-${Date.now()}`;
+    const assistantId = nextId("a");
     setMessages((m) => [
       ...m,
       userMsg,

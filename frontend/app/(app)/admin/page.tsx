@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ShieldCheck, Users } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { api, ApiError } from "@/lib/api";
 import type { Role, User } from "@/lib/types";
@@ -23,7 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { EmptyState, LoadingRows, PageHeader, StatusBadge } from "@/components/shared";
+import { EmptyState, LoadingRows, PageHeader } from "@/components/shared";
 
 const ROLES: Role[] = ["admin", "manager", "developer"];
 

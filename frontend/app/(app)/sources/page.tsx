@@ -1,11 +1,10 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { FolderGit2, Loader2, Plus, Upload } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { FolderGit2, Loader2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { api, ApiError } from "@/lib/api";
-import type { Repository } from "@/lib/types";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

@@ -14,7 +14,6 @@ import {
   FolderClosed,
   FolderOpen,
   Loader2,
-  RefreshCw,
   Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
