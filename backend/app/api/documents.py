@@ -21,7 +21,7 @@ from app.auth.dependencies import get_current_user, require_roles
 from app.core.config import get_settings
 from app.core.database import get_db
 from app.ingestion.parsers import SUPPORTED_UPLOAD_EXTENSIONS
-from app.ingestion.pipeline import delete_document_storage, process_document
+from app.ingestion.pipeline import delete_document_storage, process_document, schedule
 from app.models.knowledge import Chunk, Document, DocumentStatus, SourceType
 from app.models.user import User, UserRole
 from app.schemas.knowledge import ChunkOut, DocumentOut
@@ -80,7 +80,7 @@ async def upload_document(
     doc.storage_url = str(dest)
     db.commit()
     db.refresh(doc)
-    background.add_task(process_document, doc.id)
+    schedule(background, process_document, doc.id)
     return DocumentOut.model_validate(doc)
 
 
@@ -144,7 +144,7 @@ def reindex_document(
     doc.status = DocumentStatus.pending
     doc.error = None
     db.commit()
-    background.add_task(process_document, doc.id)
+    schedule(background, process_document, doc.id)
     return DocumentOut.model_validate(doc)
 
 

@@ -25,7 +25,7 @@ logger = logging.getLogger("seed")
 
 SAMPLE_DIR = Path(
     os.environ.get("SEED_SAMPLE_DIR")
-    or Path(__file__).resolve().parent.parent.parent / "docs" / "sample"
+    or Path(__file__).resolve().parent.parent / "docs" / "sample"
 )
 
 

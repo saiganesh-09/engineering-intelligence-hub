@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from app.auth.dependencies import get_current_user, require_roles
 from app.core.database import get_db
 from app.ingestion.github import RepoError, parse_github_url
-from app.ingestion.pipeline import index_repository
+from app.ingestion.pipeline import index_repository, schedule
 from app.models.knowledge import CodeFile, Repository
 from app.models.user import User, UserRole
 from app.schemas.knowledge import (
@@ -57,7 +57,7 @@ def connect_repository(
     db.add(repo)
     db.commit()
     db.refresh(repo)
-    background.add_task(index_repository, repo.id)
+    schedule(background, index_repository, repo.id)
     return _out(db, repo)
 
 
@@ -92,7 +92,7 @@ def reindex_repository(
     repo = db.get(Repository, repository_id)
     if repo is None:
         raise HTTPException(404, "Repository not found")
-    background.add_task(index_repository, repo.id)
+    schedule(background, index_repository, repo.id)
     repo.indexing_status = repo.indexing_status  # unchanged until worker flips it
     return _out(db, repo)
 

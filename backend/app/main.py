@@ -118,6 +118,9 @@ def startup():
     settings.storage_dir.mkdir(parents=True, exist_ok=True)
     try:
         init_db()
+        from app.bootstrap import maybe_seed
+
+        maybe_seed()
     except Exception:
         logger.exception("Database initialization failed — is Postgres running?")
 

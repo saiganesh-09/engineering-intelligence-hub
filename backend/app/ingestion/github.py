@@ -71,8 +71,61 @@ def _authed_url(url: str) -> str:
     return url
 
 
+def _tarball_candidates(url: str, branch: str | None) -> tuple[str, list[str]]:
+    owner, name = parse_github_url(url)
+    if branch:
+        branches = list(dict.fromkeys([branch, "main", "master"]))
+    else:
+        branches = ["main", "master"]
+    return owner, name, branches
+
+
+def _download_tarball(url: str, dest: Path, branch: str | None = None) -> str:
+    """Fallback for hosts without a git binary (serverless): fetch the repo
+    as a GitHub tarball via the public codeload endpoint. Returns the branch
+    actually used."""
+    import tarfile
+    from io import BytesIO
+
+    import httpx
+
+    owner, name, branches = _tarball_candidates(url, branch)
+    headers = {}
+    if settings.github_token:
+        headers["Authorization"] = f"Bearer {settings.github_token}"
+    last_err: Exception | None = None
+    for b in branches:
+        try:
+            r = httpx.get(
+                f"https://codeload.github.com/{owner}/{name}/tar.gz/{b}",
+                headers=headers, follow_redirects=True, timeout=120,
+            )
+            r.raise_for_status()
+            if dest.exists():
+                shutil.rmtree(dest)
+            dest.mkdir(parents=True, exist_ok=True)
+            with tarfile.open(fileobj=BytesIO(r.content), mode="r:gz") as tar:
+                # Strip the top-level "<repo>-<sha>" directory.
+                members = [m for m in tar.getmembers() if "/" in m.name]
+                for m in members:
+                    m.name = m.name.split("/", 1)[1]
+                tar.extractall(dest, members=[m for m in members if m.name])
+            return b
+        except Exception as exc:  # noqa: BLE001 — try next branch
+            last_err = exc
+            continue
+    raise RepoError(
+        f"Failed to download repository. Check the URL, branch name, and "
+        f"access permissions. ({str(last_err)[:200] if last_err else 'unknown error'})"
+    )
+
+
 def clone_repository(url: str, dest: Path, branch: str | None = None) -> str:
-    """Shallow-clone ``url`` into ``dest``. Returns the branch actually used."""
+    """Shallow-clone ``url`` into ``dest``. Returns the branch actually used.
+    Falls back to a GitHub tarball download when git isn't installed
+    (serverless runtimes)."""
+    if shutil.which("git") is None:
+        return _download_tarball(url, dest, branch)
     if dest.exists():
         shutil.rmtree(dest)
     dest.parent.mkdir(parents=True, exist_ok=True)

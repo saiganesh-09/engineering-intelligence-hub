@@ -2,7 +2,9 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import field_validator
+import os
+
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -36,6 +38,17 @@ class Settings(BaseSettings):
             if v.startswith("postgres://"):
                 return "postgresql+psycopg://" + v[len("postgres://"):]
         return v
+
+    @model_validator(mode="after")
+    def _fallback_db_env(self) -> "Settings":
+        # Vercel-integrated databases inject POSTGRES_URL / POSTGRES_URL_NON_POOLING.
+        if "DATABASE_URL" not in os.environ:
+            for alt in ("POSTGRES_URL_NON_POOLING", "POSTGRES_URL"):
+                v = os.environ.get(alt)
+                if v:
+                    object.__setattr__(self, "database_url", v)
+                    break
+        return self
 
     # --- Auth / JWT ---
     jwt_secret: str = "change-me-in-production"
@@ -79,6 +92,10 @@ class Settings(BaseSettings):
 
     # --- Rate limiting ---
     rate_limit_per_minute: int = 120
+
+    # Run indexing inline instead of as a background task — required on
+    # serverless hosts that freeze the process after the response is sent.
+    sync_background: bool = False
 
     @property
     def max_upload_bytes(self) -> int:

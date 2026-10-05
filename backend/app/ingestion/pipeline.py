@@ -31,6 +31,15 @@ settings = get_settings()
 EMBED_BATCH = 64
 
 
+def schedule(background, fn, *args) -> None:
+    """Queue ``fn`` as a background task — or run it inline on serverless
+    hosts that freeze the worker after the response is sent."""
+    if settings.sync_background:
+        fn(*args)
+    else:
+        background.add_task(fn, *args)
+
+
 def _embed_chunks(db: Session, chunks: list[Chunk]) -> None:
     embedder = get_embedder()
     for i in range(0, len(chunks), EMBED_BATCH):

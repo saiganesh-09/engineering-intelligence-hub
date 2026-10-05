@@ -12,7 +12,7 @@ COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY backend/app ./app
-COPY docs ./docs
+COPY backend/docs ./docs
 
 ENV PYTHONUNBUFFERED=1 \
     STORAGE_DIR=/app/storage \
