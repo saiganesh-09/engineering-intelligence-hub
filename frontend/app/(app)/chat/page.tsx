@@ -192,6 +192,7 @@ function ChatInner() {
   const loadedRef = useRef<string | null>(null);
   const idSeq = useRef(0);
   const nextId = (p: string) => `${p}-${++idSeq.current}`;
+  const autoAskedRef = useRef(false);
 
   // Load an existing conversation's messages.
   useEffect(() => {
@@ -222,6 +223,17 @@ function ChatInner() {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Auto-send a question passed via ?q= (dashboard quick-ask, palette).
+  useEffect(() => {
+    const q = params.get("q");
+    if (q && !autoAskedRef.current) {
+      autoAskedRef.current = true;
+      setInput("");
+      send(q);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const selectConversation = useCallback(
     (id: string | null) => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { LogOut, Moon, Plus, Sun } from "lucide-react";
+import { LogOut, Moon, Plus, Search, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/lib/auth";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -29,7 +29,14 @@ export function Topbar() {
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-background px-6">
-      <div />
+      <button
+        onClick={() => window.dispatchEvent(new Event("eih:palette"))}
+        className="flex h-8 w-64 items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 text-sm text-muted-foreground transition-colors hover:bg-muted/70"
+      >
+        <Search className="h-3.5 w-3.5" />
+        <span className="flex-1 text-left text-xs">Search or jump to…</span>
+        <kbd className="rounded border border-border bg-background px-1.5 py-0.5 text-[10px]">⌘K</kbd>
+      </button>
       <div className="flex items-center gap-2">
         <Button size="sm" onClick={() => router.push("/chat")}>
           <Plus className="mr-1 h-4 w-4" /> New chat

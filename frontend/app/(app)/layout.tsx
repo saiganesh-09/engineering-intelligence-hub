@@ -3,6 +3,7 @@
 import { RequireAuth } from "@/lib/auth";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Topbar } from "@/components/layout/topbar";
+import { CommandPalette } from "@/components/command-palette";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -13,6 +14,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <Topbar />
           <main className="flex-1 overflow-y-auto">{children}</main>
         </div>
+        <CommandPalette />
       </div>
     </RequireAuth>
   );

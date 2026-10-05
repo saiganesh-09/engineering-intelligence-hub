@@ -14,26 +14,37 @@ import {
   Search,
   Settings,
   ShieldAlert,
-  ShieldCheck,
   Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
-const NAV = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/chat", label: "AI Chat", icon: MessageSquareText },
-  { href: "/search", label: "Search", icon: Search },
-  { href: "/sources", label: "Knowledge Sources", icon: Library },
-  { href: "/repositories", label: "Repositories", icon: FolderGit2 },
-  { href: "/architecture", label: "Architecture", icon: Network },
-  { href: "/incidents", label: "Incidents", icon: ShieldAlert },
-  { href: "/conversations", label: "Conversations", icon: FileText },
-  { href: "/onboarding", label: "Onboarding", icon: GraduationCap },
-];
-
-const BOTTOM = [
-  { href: "/settings", label: "Settings", icon: Settings },
+const NAV: { group: string; items: { href: string; label: string; icon: typeof Search }[] }[] = [
+  {
+    group: "Main",
+    items: [
+      { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { href: "/chat", label: "AI Chat", icon: MessageSquareText },
+      { href: "/search", label: "Search", icon: Search },
+    ],
+  },
+  {
+    group: "Knowledge",
+    items: [
+      { href: "/sources", label: "Knowledge Sources", icon: Library },
+      { href: "/repositories", label: "Repositories", icon: FolderGit2 },
+      { href: "/incidents", label: "Incidents", icon: ShieldAlert },
+    ],
+  },
+  {
+    group: "Intelligence",
+    items: [
+      { href: "/architecture", label: "Architecture", icon: Network },
+      { href: "/onboarding", label: "Onboarding", icon: GraduationCap },
+      { href: "/conversations", label: "Conversations", icon: FileText },
+    ],
+  },
 ];
 
 export function Sidebar() {
@@ -48,45 +59,73 @@ export function Sidebar() {
         key={href}
         href={href}
         className={cn(
-          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+          "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
           active
             ? "bg-sidebar-accent text-sidebar-accent-foreground"
             : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground",
         )}
       >
-        <Icon className="h-4 w-4 shrink-0" />
+        {active && (
+          <span className="absolute left-0 top-1/2 h-4 w-1 -translate-y-1/2 rounded-r-full bg-primary" />
+        )}
+        <Icon className={cn("h-4 w-4 shrink-0", active && "text-primary")} />
         <span className="truncate">{label}</span>
       </Link>
     );
   };
 
+  const initials = (user?.name ?? "?")
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
   return (
     <aside className="flex h-screen w-60 shrink-0 flex-col border-r border-border bg-sidebar">
       <Link href="/dashboard" className="flex items-center gap-2.5 px-4 py-4">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-          <BrainCircuit className="h-4.5 w-4.5 text-primary-foreground" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-violet-400 shadow-sm shadow-primary/25">
+          <BrainCircuit className="h-4 w-4 text-primary-foreground" />
         </div>
         <div className="leading-tight">
-          <p className="text-sm font-semibold">Engineering</p>
-          <p className="text-xs text-muted-foreground">Intelligence Hub</p>
+          <p className="text-sm font-bold">Engineering</p>
+          <p className="text-[11px] text-muted-foreground">Intelligence Hub</p>
         </div>
       </Link>
-      <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-2">
-        {NAV.map((n) => item(n.href, n.label, n.icon))}
+      <nav className="flex-1 overflow-y-auto px-3 py-2">
+        {NAV.map((g) => (
+          <div key={g.group} className="mb-4">
+            <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">
+              {g.group}
+            </p>
+            <div className="space-y-0.5">
+              {g.items.map((n) => item(n.href, n.label, n.icon))}
+            </div>
+          </div>
+        ))}
         {isAdmin && (
-          <>
-            <p className="px-3 pb-1 pt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <div className="mb-4">
+            <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">
               Admin
             </p>
-            {item("/admin", "User Management", Users)}
-          </>
+            <div className="space-y-0.5">{item("/admin", "User Management", Users)}</div>
+          </div>
         )}
       </nav>
-      <div className="space-y-0.5 border-t border-border px-3 py-2">
-        {BOTTOM.map((n) => item(n.href, n.label, n.icon))}
-        <div className="flex items-center gap-2 px-3 py-2">
-          <ShieldCheck className="h-3.5 w-3.5 text-muted-foreground" />
-          <span className="text-xs capitalize text-muted-foreground">{user?.role}</span>
+      <div className="border-t border-border p-3">
+        <div className="space-y-0.5">
+          {item("/settings", "Settings", Settings)}
+        </div>
+        <div className="mt-2 flex items-center gap-2.5 rounded-lg px-3 py-2">
+          <Avatar className="h-7 w-7">
+            <AvatarFallback className="bg-primary/10 text-[11px] font-semibold text-primary">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0 flex-1 leading-tight">
+            <p className="truncate text-xs font-medium">{user?.name}</p>
+            <p className="text-[10px] capitalize text-muted-foreground">{user?.role}</p>
+          </div>
         </div>
       </div>
     </aside>
