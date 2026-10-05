@@ -27,10 +27,20 @@ app = FastAPI(
     docs_url="/docs" if not settings.is_production else None,
 )
 
+_cors_origins = [
+    settings.frontend_url,
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.frontend_url, "http://localhost:3000",
-                   "http://127.0.0.1:3000"],
+    allow_origins=_cors_origins,
+    # Dev-only: any localhost/127.0.0.1 port (dev proxies, alt ports).
+    # In production the explicit list above still applies... regex is additive,
+    # so restrict it to non-production environments.
+    allow_origin_regex=None
+    if settings.is_production
+    else r"https?://(localhost|127\.0\.0\.1)(:\d+)?",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
