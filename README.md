@@ -1,5 +1,10 @@
 # Engineering Intelligence Hub
 
+**🔗 Live demo:** https://engineering-intelligence-hub-psi.vercel.app
+(frontend on Vercel · FastAPI on Vercel serverless · Neon Postgres —
+`SEED_DEMO` seeds the demo workspace on cold start; sign in with
+`admin@eih.dev` / `admin12345` or register)
+
 An AI-powered internal knowledge and engineering productivity platform for
 software teams. It ingests technical documentation, GitHub repositories, and
 incident reports, then answers natural-language engineering questions with
